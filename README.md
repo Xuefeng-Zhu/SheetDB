@@ -1,8 +1,11 @@
+##Overview
 The SQL implementation is based on Google sheet by connecting to remote MySQL database system via JDBC.
 
+##Configue
 Before starting to use the tool, it need to be configued by clicking Configure in SQL menu. After the url, adm, and password are stored, you are able to run SQL statement in Google Sheet.
 There are two ways to run the SQL statement. You can type directly in cell, like =SQL() to run it, or click SQL on the Menu.
 
+##Feature
 There are several advanced features with this tool:
 ```
 1. Add Table option into menu, which contains functions like Load Tables, Refresh Table, Drop Table, Fast Insert, Fast Update,
