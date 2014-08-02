@@ -25,7 +25,8 @@ and then click Refresh in SQL menu.
 ```
 All the functions in Table menu will automatically apply to current table sheet, but if user uses them in SQL Sheet, table name and attributes of table will be asked as an input. In SQL sheet, user can use Fast Insert, Fast Update, and Fast Delete to quickly operate data returned by SQL Query.
 
+##Issue
 I also tried to implement the event trigger function to allow data in database to be automatically updated when user makes change to Google sheet, but after testing it, I found JDBC is not working in the trigger function. I guess the reason is that trigger function is not supporting external library like JDBC, which will cost lots of computation time. 
 
-
+##Demo
 The link to the project is [demo](https://docs.google.com/spreadsheet/ccc?key=0AlMMHFOg-bRZdHlLR0hEZDBQakhQQ2NsdkJ2NGwyeVE&usp=sharing)
