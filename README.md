@@ -1,3 +1,6 @@
+##Demo
+The link to the project is [demo](https://docs.google.com/spreadsheet/ccc?key=0AlMMHFOg-bRZdHlLR0hEZDBQakhQQ2NsdkJ2NGwyeVE&usp=sharing)
+
 ##Overview
 The SQL implementation is based on Google sheet by connecting to remote MySQL database system via JDBC.
 
@@ -28,5 +31,7 @@ All the functions in Table menu will automatically apply to current table sheet,
 ##Issue
 I also tried to implement the event trigger function to allow data in database to be automatically updated when user makes change to Google sheet, but after testing it, I found JDBC is not working in the trigger function. I guess the reason is that trigger function is not supporting external library like JDBC, which will cost lots of computation time. 
 
-##Demo
-The link to the project is [demo](https://docs.google.com/spreadsheet/ccc?key=0AlMMHFOg-bRZdHlLR0hEZDBQakhQQ2NsdkJ2NGwyeVE&usp=sharing)
+##Licence
+MIT
+
+
