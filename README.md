@@ -10,8 +10,6 @@ SheetDB allows you to connect to remote SQL server and load data into Google She
 ## Usage
 Before starting to use SheetDC, it needs to be configued. Click Configure in SQL menu and enter url, admin, and password. **Currently, SheetDB only supports  Google Cloud SQL, MySQL, Microsoft SQL Server, and Oracle databases.** If everything sets up correctly, you are able to run SQL statement in Google Sheet.
 
-There are two ways to run SQL statements. You can type directly in cell, like `=SQL()` to run it, or click SQL on the Menu.
-
 ## Features
 
 * After the SheetDB is configured, SheetDB will automatically load tables in database into google sheet. Later user can use Load Tables to load new tables or Refresh Tables to fetch latest data.
@@ -26,6 +24,8 @@ Fast Delete
 and then click Refresh in SQL menu.
 
 All the functions in Table menu will automatically apply to current table sheet, but if user uses them in SQL Sheet, table name and attributes of table will be asked as an input. In SQL sheet, user can use Fast Insert, Fast Update, and Fast Delete to quickly operate data returned by SQL Query.
+
+There are two ways to run SQL statements. You can type directly in cell, like `=SQL()` to run it, or click SQL on the Menu.
 
 ## Licence
 MIT
