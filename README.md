@@ -8,7 +8,7 @@ SheetDB allows you to connect to remote SQL server and load data into Google She
 [SheetSQL](https://github.com/Xuefeng-Zhu/SheetSQL) allows you process data using SQL directly in Google Sheet
 
 ## Usage
-Before starting to use SheetDC, it needs to be configued. Click Configure in SQL menu and enter url, admin, and password. **Currently, SheetDB only supports  Google Cloud SQL, MySQL, Microsoft SQL Server, and Oracle databases.** If everything sets up correctly, you are able to run SQL statement in Google Sheet.
+Before starting to use SheetDC, it needs to be configued. Click Configure in SQL menu and enter url(i.e. jdbc:mysql://example.com), admin, and password. **Currently, SheetDB only supports  Google Cloud SQL, MySQL, Microsoft SQL Server, and Oracle databases.** If everything sets up correctly, you are able to run SQL statement in Google Sheet.
 
 ## Features
 
