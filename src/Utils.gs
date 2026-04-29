@@ -1,5 +1,6 @@
 var SQL_SHEET_NAME = 'SQL';
 var CONFIG_MENU_NAME = 'Configure';
+var CANCEL_BUTTON_VALUE = 'cancel';
 
 function ensureSheetByName(sheetName) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -12,6 +13,18 @@ function ensureSheetByName(sheetName) {
 
 function ensureSqlSheet() {
   return ensureSheetByName(SQL_SHEET_NAME);
+}
+
+function isCancel(inputValue) {
+  return inputValue === CANCEL_BUTTON_VALUE;
+}
+
+function appendSqlHistory(rows) {
+  if (!rows || rows.length === 0) return;
+  var sqlSheet = ensureSqlSheet();
+  for (var i = 0; i < rows.length; i++) {
+    sqlSheet.appendRow(rows[i]);
+  }
 }
 
 function quoteSqlValue(value) {

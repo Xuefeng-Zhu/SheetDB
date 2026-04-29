@@ -25,7 +25,7 @@ function showPrompt() {
       'Please enter SQL statement you want to execute:',
       Browser.Buttons.OK_CANCEL);
 
-  if (result != 'cancel') {
+  if (!isCancel(result)) {
     var out = SQL(result);
     if (!out || out.length === 0) {
       return;
@@ -45,12 +45,13 @@ function refresh(){
   var statement = cell.getValue();
   statement = statement.replace("Success","").trim();
   var out = SQL(statement);
+  if (!out || out.length === 0) return;
   var sheet = cell.getSheet();
   var temp = cell.getRowIndex();
   var nrow = 1;
-  while (sheet.getRange(temp + nrow, 1).getValue() != " " && (!sheet.getRange(temp + nrow, 1).isBlank()))
+  while (sheet.getRange(temp + nrow, 1).getValue() !== " " && (!sheet.getRange(temp + nrow, 1).isBlank()))
     nrow++;
-  if ( nrow < out.length)
+  if (nrow < out.length)
      sheet.insertRows(temp, out.length - nrow);
   else if (nrow > out.length)
     sheet.deleteRows(temp, nrow - out.length);
@@ -69,7 +70,7 @@ function warning(){
     'Are you sure you want to clear all the history?',
     Browser.Buttons.YES_NO);
 
-  if (result == 'yes') {
+  if (result === 'yes') {
     var sheet = SpreadsheetApp.getActiveSheet();
     sheet.clear();
     Browser.msgBox('History Cleared.');
@@ -83,7 +84,7 @@ function configue(){
       'Configue',
       'Please enter the URL of SQL database:',
       Browser.Buttons.OK_CANCEL);    
-  if (url == 'cancel') {
+  if (isCancel(url)) {
     Browser.msgBox('Configuration does not complete!');
     return;
   }
@@ -92,7 +93,7 @@ function configue(){
     'Configue',
     'Please enter the administrator of SQL database:',
     Browser.Buttons.OK_CANCEL);  
-  if (adm == 'cancel'){
+  if (isCancel(adm)){
     Browser.msgBox('Configuration does not complete!');
     return;
   }
@@ -101,7 +102,7 @@ function configue(){
     'Configue',
     'Please enter the password of the administrator:',
     Browser.Buttons.OK_CANCEL);  
-  if (password == 'cancel') {
+  if (isCancel(password)) {
     Browser.msgBox('Configuration does not complete!');
     return;
   }
