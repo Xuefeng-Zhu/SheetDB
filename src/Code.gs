@@ -4,7 +4,7 @@ function onOpen() {
     {name: 'Show prompt', functionName: 'showPrompt'},
     {name: 'Refresh', functionName: 'refresh'},
     {name: 'Clear History', functionName: 'warning'},
-    {name: CONFIG_MENU_NAME, functionName: 'configue'}
+    {name: CONFIG_MENU_NAME, functionName: 'configure'}
   ];
   var table = [
     {name: 'Load Tables', functionName: 'loadTables'},
@@ -58,10 +58,12 @@ function refresh(){
   
   sheet.deleteRow(temp);
   sheet.insertRows(temp);
-  sheet.getRange(temp, 1).setValue(out[0])
+  sheet.getRange(temp, 1).setValue(out[0]);
   out.shift();
-  var range = sheet.getRange(temp + 1, 1, out.length, out[0].length);
-  range.setValues(out);
+  if (out.length > 0) {
+    var range = sheet.getRange(temp + 1, 1, out.length, out[0].length);
+    range.setValues(out);
+  }
 }
 
 function warning(){
@@ -79,7 +81,7 @@ function warning(){
   }
 }
 
-function configue(){
+function configure(){
   var url = Browser.inputBox(
       'Configue',
       'Please enter the URL of SQL database:',
@@ -115,6 +117,11 @@ function configue(){
   loadTables();
 }
 
+// Keep old function name for backward compatibility.
+function configue() {
+  configure();
+}
+
 function SQL(input) {
   var config = getConfigValues();
   
@@ -131,7 +138,7 @@ function SQL(input) {
     conn = Jdbc.getConnection(config.url, config.admin, config.password);
     statement = conn.createStatement();
     var temp = input.trim().split(/\s+/);
-    if (temp[0].toUpperCase() == "SELECT" || temp[0].toUpperCase() == "SHOW" ||  temp[0].toUpperCase() == "DESCRIBE")
+    if (temp[0].toUpperCase() === "SELECT" || temp[0].toUpperCase() === "SHOW" ||  temp[0].toUpperCase() === "DESCRIBE")
     {
       result = statement.executeQuery(input);
       while (result.next())

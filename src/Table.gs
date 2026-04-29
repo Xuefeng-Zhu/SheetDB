@@ -45,6 +45,10 @@ function refreshTable()
       return;
     }
   }
+  if (!sheet) {
+    Browser.msgBox('Table not found.');
+    return;
+  }
   refreshTHelp(sheet);
   Browser.msgBox('Table successfully refreshed');
 }
@@ -85,7 +89,14 @@ function dropTable()
       return;
     }
   }
-  appendSqlHistory([SQL("DROP TABLE " + sheet.getSheetName())[0]]);
+  if (!sheet) {
+    Browser.msgBox('Table not found.');
+    return;
+  }
+  var sqlResult = SQL("DROP TABLE " + sheet.getSheetName());
+  if (sqlResult && sqlResult.length > 0) {
+    appendSqlHistory([sqlResult[0]]);
+  }
   SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
 }
 
