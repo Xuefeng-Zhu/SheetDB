@@ -4,7 +4,7 @@ function onOpen() {
     {name: 'Show prompt', functionName: 'showPrompt'},
     {name: 'Refresh', functionName: 'refresh'},
     {name: 'Clear History', functionName: 'warning'},
-    {name: 'Configue', functionName: 'configue'}
+    {name: CONFIG_MENU_NAME, functionName: 'configue'}
   ];
   var table = [
     {name: 'Load Tables', functionName: 'loadTables'},
@@ -27,6 +27,9 @@ function showPrompt() {
 
   if (result != 'cancel') {
     var out = SQL(result);
+    if (!out || out.length === 0) {
+      return;
+    }
     var sheet = SpreadsheetApp.getActiveSheet();
     for (var i = 0; i < out.length; i++)
       sheet.appendRow(out[i]);
@@ -103,8 +106,7 @@ function configue(){
     return;
   }
   
-  var ss = SpreadsheetApp.getActive();
-  var sheet = ss.getSheetByName("Configue");
+  var sheet = getConfigSheet();
   sheet.getRange(1, 2).setValue(url);
   sheet.getRange(2, 2).setValue(adm);
   sheet.getRange(3, 2).setValue(password);
@@ -113,39 +115,43 @@ function configue(){
 }
 
 function SQL(input) {
-  var ss = SpreadsheetApp.getActive();
-  var sheet = ss.getSheetByName("Configue");
-  var url = sheet.getRange(1, 2).getValue(); 
-  var adm = sheet.getRange(2, 2).getValue(); 
-  var password = sheet.getRange(3, 2).getValue(); 
+  var config = getConfigValues();
   
-  if (url == "" || adm == "" || password == ""){
+  if (!hasConfigValues(config)){
     Browser.msgBox("Please configue the system first!");
     return;
   }
       
-  var conn = Jdbc.getConnection(url, adm, password);
-  var statement = conn.createStatement();
-  var result;
-  var out = new Array();
-  out.push([input + " Success"]);
-  var temp = input.split(" ");
-  if (temp[0].toUpperCase() == "SELECT" || temp[0].toUpperCase() == "SHOW" ||  temp[0].toUpperCase() == "DESCRIBE")
-  {
-    result = statement.executeQuery(input);
-    while (result.next())
+  var conn = null;
+  var statement = null;
+  var result = null;
+  var out = [[input + " Success"]];
+  try {
+    conn = Jdbc.getConnection(config.url, config.admin, config.password);
+    statement = conn.createStatement();
+    var temp = input.trim().split(/\s+/);
+    if (temp[0].toUpperCase() == "SELECT" || temp[0].toUpperCase() == "SHOW" ||  temp[0].toUpperCase() == "DESCRIBE")
     {
-      var temp = [];
-      for (var col = 0; col < result.getMetaData().getColumnCount(); col++) 
-        temp.push(result.getString(col + 1));
-      out.push(temp);
+      result = statement.executeQuery(input);
+      while (result.next())
+      {
+        var row = [];
+        for (var col = 0; col < result.getMetaData().getColumnCount(); col++) 
+          row.push(result.getString(col + 1));
+        out.push(row);
+      }
     }
+    else 
+    {
+      statement.executeUpdate(input);
+    }
+    return out;
+  } catch (error) {
+    Browser.msgBox("SQL execution failed: " + error.message);
+    return [[input + " Failed"], [error.message]];
+  } finally {
+    if (result) result.close();
+    if (statement) statement.close();
+    if (conn) conn.close();
   }
-  else 
-  {
-    result = statement.executeUpdate(input);
-  }
-
-  return out;
 }
-

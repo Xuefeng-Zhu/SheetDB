@@ -32,17 +32,13 @@ function onEdit(event) {
     }
 
     var input = "UPDATE " + name + " SET " + update + " WHERE " + condition;
-    var ss = SpreadsheetApp.getActive();
-    sheet = ss.getSheetByName("Configue");
-    var url = sheet.getRange(1, 2).getValue(); 
-    var adm = sheet.getRange(2, 2).getValue(); 
-    var password = sheet.getRange(3, 2).getValue(); 
-    if (url == "" || adm == "" || password == ""){
+    var config = getConfigValues();
+    if (!hasConfigValues(config)){
       Browser.msgBox("Please configue the system first!");
       return;
     }
 
-    Jdbc.getConnection(url, adm, password);
+    Jdbc.getConnection(config.url, config.admin, config.password);
                 Browser.msgBox(password);
 
     var statement = conn.createStatement();

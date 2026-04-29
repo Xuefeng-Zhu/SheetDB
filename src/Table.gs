@@ -1,6 +1,7 @@
 function loadTables()
 {
   var tables = SQLHelp("SHOW tables");
+  if (!tables) return;
   for (var i = 0; i < tables.length; i++)
   {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -120,14 +121,11 @@ function fastInsert()
     {
       var row = values[r];
       for (var c = 0; c < row.length; c++)
-      {
-        if (typeof row[c] == "string")
-          row[c] = "'"+ row[c] + "'";
-      }
+        row[c] = quoteSqlValue(row[c]);
       row = row.join(",");
       row = "(" + row + ")";
       var out = SQL("INSERT INTO " + tableName + attributes + " VALUES " + row);
-      var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("SQL");
+      var sheet = ensureSqlSheet();
       for (var i = 0; i < out.length; i++)
         sheet.appendRow(out[i]);
     }
@@ -175,12 +173,11 @@ function fastDelete()
           continue;
         if (c != 0 && temp != "")
           temp += " AND ";
-        if (typeof row[c] == "string")
-          row[c] = "'"+ row[c] + "'";
+        row[c] = quoteSqlValue(row[c]);
         temp += (attributes[c] + "=" + row[c]);
       }
       var out = SQL("DELETE FROM " + tableName + " WHERE " + temp);
-      var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("SQL");
+      var sheet = ensureSqlSheet();
       for (var i = 0; i < out.length; i++)
         sheet.appendRow(out[i]);
     }
@@ -235,8 +232,7 @@ function fastUpdate()
       var condition = "";
       for (var c = 0; c < row.length; c++)
       {
-        if (typeof row[c] == "string")
-          row[c] = "'"+ row[c] + "'";
+        row[c] = quoteSqlValue(row[c]);
 
         if (weight[c] == "bold")
         {
@@ -256,7 +252,7 @@ function fastUpdate()
       if (update.length > 0)
       {
         var out = SQL("UPDATE " + tableName + " SET " + update + " WHERE " + condition);
-        var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("SQL");
+        var sheet = ensureSqlSheet();
         for (var i = 0; i < out.length; i++)
           sheet.appendRow(out[i]);
       }
@@ -271,29 +267,35 @@ function fastUpdate()
 }
 
 function SQLHelp(input) {
-  var ss = SpreadsheetApp.getActive();
-  var sheet = ss.getSheetByName("Configue");
-  var url = sheet.getRange(1, 2).getValue(); 
-  var adm = sheet.getRange(2, 2).getValue(); 
-  var password = sheet.getRange(3, 2).getValue(); 
+  var config = getConfigValues();
   
-  if (url == "" || adm == "" || password == ""){
+  if (!hasConfigValues(config)){
     Browser.msgBox("Please configue the system first!");
     return;
   }
       
-  var conn = Jdbc.getConnection(url, adm, password);
-  var statement = conn.createStatement();
-  var result;
-  var out = new Array();
-  result = statement.executeQuery(input);
-  while (result.next())
-  {
-    var temp = [];
-    for (var col = 0; col < result.getMetaData().getColumnCount(); col++) 
-      temp.push(result.getString(col + 1));
-    out.push(temp);
+  var conn = null;
+  var statement = null;
+  var result = null;
+  var out = [];
+  try {
+    conn = Jdbc.getConnection(config.url, config.admin, config.password);
+    statement = conn.createStatement();
+    result = statement.executeQuery(input);
+    while (result.next())
+    {
+      var temp = [];
+      for (var col = 0; col < result.getMetaData().getColumnCount(); col++) 
+        temp.push(result.getString(col + 1));
+      out.push(temp);
+    }
+    return out;
+  } catch (error) {
+    Browser.msgBox("SQL query failed: " + error.message);
+    return null;
+  } finally {
+    if (result) result.close();
+    if (statement) statement.close();
+    if (conn) conn.close();
   }
-  return out;
 }
-
