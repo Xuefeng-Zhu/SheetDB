@@ -49,14 +49,18 @@ function showPrompt() {
 /**
  * Re-executes the SQL statement found in the currently selected cell
  * and replaces the previous result block in place.
- * Strips " Success" or " Failed" suffix from the cell value before re-executing.
+ * Strips " Success", " Failed", or " — No results" suffix from the cell value before re-executing.
  */
 function refresh() {
   var cell = SpreadsheetApp.getActiveRange();
   var statement = cell.getValue();
 
-  // Strip " Success" or " Failed" suffix
-  statement = statement.replace(/ Success$/, '').replace(/ Failed$/, '').trim();
+  // Strip known result suffixes before re-executing
+  statement = statement
+    .replace(/ Success$/, '')
+    .replace(/ Failed$/, '')
+    .replace(/ — No results$/, '')
+    .trim();
 
   var type = classifySql(statement);
   var sheet = cell.getSheet();
